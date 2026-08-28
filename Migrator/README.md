@@ -57,3 +57,17 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+------------------------------------------------------------------------------------
+
+
+To temporarily bypass execution, write:
+
+Set-ExecutionPolicy -Scope Process Bypass
+npm -v
+
+
+This forces the current powershell session to override the execution policy set up by the organisation, and be able to run npm, and other scripts.
+
+-- Check before every commit, if the project is being built or not, if not fix it, only then commit, and try to commit small changes, no big changes at once.

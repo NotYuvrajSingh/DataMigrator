@@ -1,0 +1,40 @@
+<div>Submit a request to migrate selected data between accounts.</div>
+
+<hr>
+
+<div> PBI Number<span style="color: red;">*</span> : <input type="text" placeholder="Enter PBI Number" /> </div>
+<div> Source Account<span style="color: red;">*</span> : <input type="text" placeholder="Enter Source Account" /> </div>
+<div> Destination Account<span style="color: red;">*</span> : <input type="text" placeholder="Enter Destination Account" /> </div>
+
+<hr>
+<!--  ---------------- ---------------- ---------------- -->
+<hr>
+
+<div><input type="checkbox" />All locations</div>
+
+
+@for(location of locations; track location) {
+    <div>
+        <label>Location Code {{location}}:</label>
+        <input type="text" placeholder="Enter Location Code {{location}}" /> 
+    </div>
+}
+
+<button (click) = "addLocation()">Add New Location</button> 
+
+<hr>
+<!--  ---------------- ---------------- ---------------- -->
+<hr>
+
+<app-migration-component></app-migration-component>
+
+<!--  ---------------- ---------------- ---------------- -->
+
+<button>Submit Request</button>
+
+
+<hr>
+<!--  ---------------- ---------------- ---------------- -->
+<hr>
+
+<button (click)="sendRequest()">Send POST Request</button>

@@ -1,0 +1,21 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MigrationComponent } from './migration-component';
+
+describe('MigrationComponent', () => {
+  let component: MigrationComponent;
+  let fixture: ComponentFixture<MigrationComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MigrationComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(MigrationComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
