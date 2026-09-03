@@ -1,0 +1,13 @@
+1. Create a formArray with the migrationComponents and populate it with the form controls.
+
+2. A solution for the AllLocationsSelected checkbox problem.
+
+3. There can be duplicate locations, fix this.
+
+4. At least one checkbox must be selected, I think if the checkboxes are part of the fb.group, this problem should go away.
+
+---------------------------------
+
+Additional:
+
+1. Try to do autocomplete on a search bar and the information is in the backend.
