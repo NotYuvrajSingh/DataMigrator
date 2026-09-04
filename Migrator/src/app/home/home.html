@@ -132,6 +132,12 @@
                     <!-- By default angular treats all buttons as submit buttons, so we specify the type explicitly, even if it
                      doesn't submit, the errors were being shown, as if the fields had been touched.-->
                 </div>
+
+                @if(locations.hasError('duplicateLocations')) {
+                    <div class="text-danger my-2">
+                        Duplicate Locations are not allowed.
+                    </div>
+                }
                 }@else {
                 <div>
                     <label class="text-secondary">Location Code 1:</label>

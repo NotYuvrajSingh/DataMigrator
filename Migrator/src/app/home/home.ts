@@ -66,7 +66,7 @@ export class Home {
   // The .some() method tests whether at least one element in the array passes the test implemented by the provided function.
 
   locationValidator(): ValidatorFn {
-    return (control : AbstractControl) => {
+    return (control: AbstractControl) => {
       const formArray = control as FormArray;
 
       //What is as in JS?
@@ -77,14 +77,14 @@ export class Home {
 
       const allLocationsSelected = this.migrationForm?.get('allLocationsSelected')?.value;
 
-      if(allLocationsSelected) {
+      if (allLocationsSelected) {
         return null;
       }
 
-      if(formArray.controls.some(c => c.value?.trim()))
+      if (formArray.controls.some(c => c.value?.trim()))
         return null;
       else
-        return {locationRequired: true};
+        return { locationRequired: true };
 
       // What does some(c => c.value?.trim()) mean?
       // It checks if at least one control in the FormArray has a non-empty value after trimming whitespace.
@@ -92,6 +92,20 @@ export class Home {
       // Whare is locationRequired coming from?
       // locationRequired is a custom validation error that we are returning if no locations are selected.
     }
+  }
+
+  duplicateLocationValidator(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const locations = control as FormArray;
+
+      const values = locations.controls
+        .map(c => c.value?.trim())
+        .filter(v => v);
+
+      const uniqueValues = new Set(values);
+
+      return values.length !== uniqueValues.size ? { duplicateLocations: true } : null;
+    };
   }
 
 
@@ -103,7 +117,10 @@ export class Home {
       allLocationsSelected: [false],
       locations: this.fb.array(
         [this.fb.control('')],
-        [this.locationValidator()]
+        [
+          this.locationValidator(),
+          this.duplicateLocationValidator()
+        ]
       ),
 
       // Why are the fb.control, and this.locationValidator() in two different arrays?
