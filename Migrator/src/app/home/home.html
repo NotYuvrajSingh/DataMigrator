@@ -157,9 +157,12 @@
                 <div class="row g-3" formArrayName="migrationComponents">
                     <!-- The only thing which has been added is this line. -->
                     @for(component of migrationComponents; track $index) {
-                    <div class="col-md-6">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" [formControlName]="$index" [id]="component">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="migration-card">
+                            <input class="migration-checkbox" type="checkbox" [formControlName]="$index" [id]="component">
+
+                            <!-- Are the html classes like form-check, form-check-input, form-check-label, form-control, form-label, etc. bootstrap classes? -->
+                            <!-- Yes, these are bootstrap classes which add styling to the elements for better appearance. -->
 
                             <!-- Why are we tracking the index and not the component?-->
                             <!-- What exactly is in $index ? -->
@@ -177,7 +180,7 @@
                             <!-- answer: No, [id] is property binding, while (id) would be event binding. -->
 
 
-                <label class="form-check-label" [for]="component">
+                <label class="migration-label" [for]="component">
                                 {{ component }}
                             </label>
                         </div>
