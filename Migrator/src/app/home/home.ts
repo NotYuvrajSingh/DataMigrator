@@ -154,6 +154,22 @@ export class Home {
     return this.migrationForm.get('migrationComponents') as FormArray;
   }
 
+  get pbiNumber() {
+    return this.migrationForm.get('pbiNumber')?.value;
+  }
+
+  get sourceAccount() {
+    return this.migrationForm.get('sourceAccount')?.value;
+  }
+
+  get destinationAccount() {
+    return this.migrationForm.get('destinationAccount')?.value;
+  }
+
+  get AllLocationsSelected() {
+    return this.migrationForm.get('allLocationsSelected')?.value;
+  }
+
   addLocation() {
     // this.locations.push(this.locations.length + 1);
     // Numbers are being added to the array, this array does not store the acutal locations, but just stores the numbers so as to 
@@ -171,6 +187,29 @@ export class Home {
     this.locations.removeAt(this.locations.length - 1);
   }
 
+  payload() {
+    let payload : {
+      sourceAccount : string;
+      destinationAccount : string;
+      pbiNumber : string;
+      migrationParams : string;
+      allLocationsSelected : boolean;
+      locationCodes? : string;
+    } = {
+      sourceAccount: this.sourceAccount,
+      destinationAccount: this.destinationAccount,
+      pbiNumber: this.pbiNumber,
+      migrationParams: this.migrationComponentControls.value.join(','),
+      allLocationsSelected: this.AllLocationsSelected
+    }
+
+    if(!this.AllLocationsSelected){
+      payload.locationCodes = this.locations.value.join(',')
+    }
+
+    return payload;
+  }
+
   sendRequest() {
     if (this.migrationForm.invalid) {
       this.migrationForm.markAllAsTouched();
@@ -181,7 +220,7 @@ export class Home {
 
     this.http.post(
       'http://localhost:3000/api/location',
-      this.migrationForm.value
+      this.payload()
     ).subscribe(
       response => {
         console.log('Request successful:', response);
