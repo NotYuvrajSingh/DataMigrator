@@ -132,13 +132,20 @@
                     <!-- By default angular treats all buttons as submit buttons, so we specify the type explicitly, even if it
                      doesn't submit, the errors were being shown, as if the fields had been touched.-->
                 </div>
+
+                @if(locations.hasError('duplicateLocations')) {
+                    <div class="text-danger my-2">
+                        Duplicate Locations are not allowed.
+                    </div>
+                }
                 }@else {
                 <div>
                     <label class="text-secondary">Location Code 1:</label>
                     <input type="text" class="form-control" placeholder="Enter Location Code 1" disabled />
                 </div>
                 <div class="d-flex justify-content-start my-3">
-                    <button type="button" class="btn btn-secondary text-secondary bg-white" (click)="addLocation()" disabled>Add New Location</button>
+                    <button type="button" class="btn btn-secondary text-secondary bg-white" (click)="addLocation()"
+                        disabled>Add New Location</button>
                     <!-- By default angular treats all buttons as submit buttons, so we specify the type explicitly, even if it
                      doesn't submit, the errors were being shown, as if the fields had been touched.-->
                 </div>
@@ -146,12 +153,24 @@
 
 
                 <h5 class="mb-4 fs-4 fw-light">Migration Components</h5>
+                
+                <div class="row g-3" formArrayName="migrationComponents">
+                    <!-- The only thing which has been added is this line. -->
+                    @for(component of migrationComponents; track $index) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="migration-card">
+                            <input class="migration-checkbox" type="checkbox" [formControlName]="$index" [id]="component">
 
-                <div class="row g-3">
-                    @for(component of migrationComponents; track component) {
-                    <div class="col-md-6">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" [id]="component">
+                            <!-- Are the html classes like form-check, form-check-input, form-check-label, form-control, form-label, etc. bootstrap classes? -->
+                            <!-- Yes, these are bootstrap classes which add styling to the elements for better appearance. -->
+
+                            <!-- Why are we tracking the index and not the component?-->
+                            <!-- What exactly is in $index ? -->
+                            <!-- $index is the index of the current iteration in the loop. -->
+                            <!-- So, won't it mix up with others when I'm running a loop again somewhere else?-->
+                            <!-- No, because the $index is scoped to the current loop, so it won't interfere with other loops. -->
+                            <!-- So, how does angular know which 0 is from this loop and which is from another?-->
+                            <!-- Angular keeps track of the context of each loop, so it knows which $index belongs to which loop. -->
 
                             <!-- What is [id] used for? -->
                             <!-- The [id] is used to bind the id attribute of the input element to the component variable. -->
@@ -161,12 +180,12 @@
                             <!-- answer: No, [id] is property binding, while (id) would be event binding. -->
 
 
-                            <label class="form-check-label" [for]="component">
+                <label class="migration-label" [for]="component">
                                 {{ component }}
                             </label>
                         </div>
                     </div>
-                    }
+                    } 
                 </div>
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary px-4" [disabled]="migrationForm.invalid">

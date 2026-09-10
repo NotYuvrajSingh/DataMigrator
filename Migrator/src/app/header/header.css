@@ -1,0 +1,21 @@
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.portal-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.portal-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.portal-header p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
