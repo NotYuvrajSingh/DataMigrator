@@ -1,0 +1,388 @@
+// Why we need services in angular?
+
+// Suppose I have a component in Angular.
+// Its primary job is to : Display UI, handle data and display it. It should not be responsible for talking to APIs.
+// Instead Angular encourages putting API - related logic into a service.
+
+// This is bad:
+
+// export class HomeComponent {
+
+//   constructor(private http: HttpClient) {}
+
+//   search(term: string) {
+//     this.http.get(...);
+//   }
+
+// }
+
+// Here the component is doing everything.
+
+// what we should do instead is: 
+// 1. Create a service: ng g service services/company
+
+// @Injectable({
+//   providedIn: 'root'
+// })
+// export class CompanyService {
+
+//   constructor(private http: HttpClient) {}
+
+//   search(term: string) {
+//     return this.http.get(...);
+//   }
+
+// }
+
+// This creates a service which we can use inside a compnent.
+
+// Then we can use it inside the component:
+
+// constructor(private companyService: CompanyService) {}
+
+// this.companyService.search("Microsoft");
+
+
+// I had a question as to how the constructor is seemingly empty yet the service becomes available everywhere in the class.
+
+It is a dependency injection in Angular.
+
+The constructor parameter is a syntactic sugar.
+
+export class HomeComponent {
+    constructor(private companyService: CompanyService) {}
+}
+
+Is the same as:
+
+export class HomeComponent {
+
+  private companyService: CompanyService;
+
+  constructor(companyService: CompanyService) {
+    this.companyService = companyService;
+  }
+
+}
+
+// One might think as to why we cannot do this ourselves?
+
+export class HomeComponent {
+
+  companyService = new CompanyService();
+
+}
+
+// But what if company needs something?
+
+export class CompanyService {
+
+  constructor(private http: HttpClient) {}
+
+}
+
+// Now we need:
+
+new CompanyService(new HttpClient(...));
+
+// This can make things messy very quickly which we don't want, so instead we just tell Angular that we want a CompanyService, and
+// Angular says that OK, I'll create one and hand it over.
+
+constructor(private companyService: CompanyService) {}
+
+// This is thus a Dependency Injection
+
+// Angular, please inject a CompanyService instance into this component. Is what we mean.
+
+--------------------------------------------
+
+// Ok, now back to what we were discussing about services:
+
+// Now, we will move on to RxJS.
+
+// Before we had Angular, as much as I know about JS, what we used to do is:
+
+let result = fetch('/api/users');
+
+// We used to ask for the data, and eventually the data used to arrive.
+
+// The important word is "eventually".
+
+// The data is asynchronous.
+
+// So, Angular used RxJS to handle ansynchronous things such as:
+
+// API responses
+// Button clicks
+// Input typing
+// Timers
+// WebSockets
+// Route changes
+
+// All of these events happen over time.
+
+// So, RxJS is a library for working with things which happen over time.
+
+--------------------------------------------------------
+
+// Now, we will discuss Observable vs Normal Value:
+
+// Let's say we have a normal value:
+
+let name = "Yuvraj";
+
+// We already have the value.
+
+// Now, if we have an Observable.
+
+let name$ = someObservable;
+
+// We don't have the value yet.
+
+// The value may arrive:
+
+// now
+// after 1 second
+// after 10 seconds
+// multiple times
+
+// So, in an Observable the values keep flowing, like water through a pipe.
+
+------------------------------------------------------------------------------------------------------
+
+// So, why does HttpClient return an Observable?
+
+// Consider this:
+this.http.get(...)
+
+// The server needs time to respond.
+
+// Therefore Angular cannot do:
+
+let data = this.http.get(...)
+
+// as the data isn't available immediately.
+
+// Instead, it returns:
+
+Observable<Data>
+
+// which means that I'll give you the data later.
+
+-----------------------------------------------------------------
+
+
+// What is subscribe()?
+
+// When we subscribe, we are basically saying:
+
+// "When the data arrives, tell me"
+
+this.http.get<User[]>('/users')
+  .subscribe(users => {
+    console.log(users);
+  });
+
+// Time 0s
+
+// Send GET request
+       // ↓
+// Register subscribe callback
+       // ↓
+// Continue executing code
+       // ↓
+// Print "After request"
+
+// ----------------------------------
+
+// Time 2s
+
+// Response arrives
+       // ↓
+// Subscribe callback executes
+       // ↓
+// Print users
+
+// Think of it like ordering pizza.
+
+Order Pizza
+
+// Then continue living your life.
+
+Doorbell rings
+
+// That's your subscribe() callback.
+
+------------------------------------------------------------------
+
+// Why do we need RxJS operators?
+
+// Suppose the user types:
+
+m
+mi
+mic
+micr
+micro
+
+// Every keystroke creates a new value:
+
+m
+↓
+mi
+↓
+mic
+↓
+micr
+↓
+micro
+
+// RxJS allows us to transform these values before using them.
+
+// Operators are essentially filters/modifiers for observable streams.
+
+----------------------------------------------------------------------------
+
+// ValuelChanges
+
+
+// Suppose we have:
+
+searchControl = new FormControl('');
+
+// Angular gives searchControl.valueChanges as an Observable.
+
+// Every time the user types;
+
+// m
+// mi
+// mic
+
+// The Observable emits:
+
+// m
+// mi
+// mic
+
+// So:
+
+this.searchControl.valueChanges.subscribe(value => {
+  console.log(value);
+});
+
+// Output:
+
+// m
+// mi
+// mic
+// micr
+// micro
+
+--------------------------------------------------------------------------------
+
+debounceTime()
+
+// Our problem is that we don't want to send 5 requests for "micro"
+
+// So, we use
+
+debounceTime(300)
+
+valueChanges.pipe(
+    debounceTime(300)
+);
+
+// Meaning: Wait 300ms after typing stops.
+
+---------------------------------------------------------------------------------
+
+distinctUntilChanged()
+
+// Suppose two api calls were sent after "micro" is typed out fully
+
+micro
+micro
+
+// So, it removes duplicates or doesn't send another request until the value has changed.
+
+---------------------------------------------------------------------------------
+
+filter()
+
+// Perhaps we don't want to search until at least two characters have been typed.
+
+filter(value => value.length >= 2)
+
+---------------------------------------------------------------------------------
+
+pipe()
+
+valueChanges.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  filter(value => value.length >= 3)
+)
+
+// User types
+     // ↓
+// Wait 300ms
+     // ↓
+// Remove duplicates
+     // ↓
+// Require 3 chars
+     // ↓
+// Continue
+
+---------------------------------------------------------------------------------
+
+switchMap()
+
+// Suppose the user has typed out:
+
+mic
+
+// Then types out 
+
+micro
+
+// Req(mic) was slow
+// Res(micro) was fast
+
+// The results will be shown for mic even though micro has been typed out as Req(mic) was slower because it arrived later.
+
+switchMap(value =>
+  this.companyService.search(value)
+)
+
+// Only the latest reques survives, the previous one is cancelled.  
+
+---------------------------------------------------------------------------------
+
+// This is the entire pipeline:
+
+this.searchControl.valueChanges.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  filter(value => value.length >= 3),
+  switchMap(value => 
+    this.companyService.search(value)
+  )
+).subscribe(results => {
+  this.suggestions = results;
+});
+
+// When textbox value changes
+
+// → wait 300ms
+
+// → ignore duplicates
+
+// → ignore values shorter than 3 characters
+
+// → call API
+
+// → cancel previous API if a newer search occurs
+
+// → when data comes back
+
+// → update suggestions

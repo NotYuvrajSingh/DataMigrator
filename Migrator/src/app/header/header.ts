@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
+import { Autocomplete } from '../component/autocomplete/autocomplete';
 
 @Component({
-  imports: [],
+  imports: [Autocomplete],
   selector: 'app-header',
   standalone: true,
   styleUrl: './header.css',
